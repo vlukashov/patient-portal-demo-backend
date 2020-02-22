@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
+@EnableAutoConfiguration
 public class PatientDashboardApplication {
 
     public static void main(String[] args) {

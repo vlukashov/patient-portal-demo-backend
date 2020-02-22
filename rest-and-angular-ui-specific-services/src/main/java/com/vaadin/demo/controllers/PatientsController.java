@@ -46,36 +46,33 @@ public class PatientsController {
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     PatientDTO getPatient(@PathVariable("id") long id){
-        return new PatientDTO(patientsRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new));
+        return new PatientDTO(patientsRepository.findOne(id));
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.POST)
     PatientDTO updatePatient(@PathVariable("id") long id, @RequestBody PatientDTO updated) {
 
-        Patient patient = patientsRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+        Patient patient = patientsRepository.findOne(id);
         patient.setFirstName(updated.getFirstName());
         patient.setMiddleName(updated.getMiddleName());
         patient.setLastName(updated.getLastName());
         patient.setBirthDate(updated.getBirthDate());
         patient.setSsn(updated.getSsn());
         patient.setGender(updated.getGender());
-        patient.setDoctor(doctorsRepository.findById(updated.getDoctor().getId())
-                .orElseThrow(IllegalArgumentException::new));
+        patient.setDoctor(doctorsRepository.findOne(updated.getDoctor().getId()));
         return new PatientDTO(patientsRepository.save(patient));
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     ResponseEntity deletePatient(@PathVariable("id") long id){
-        patientsRepository.deleteById(id);
+        patientsRepository.delete(id);
         return ResponseEntity.ok().build();
     }
 
     @RequestMapping(path = "/{id}/journalentries", method = RequestMethod.GET)
     Set<JournalEntryDTO> getJournalEntries(@PathVariable("id") long id){
         return patientsRepository
-                .findById(id).orElseThrow(IllegalArgumentException::new)
+                .findOne(id)
                 .getJournalEntries()
                 .stream()
                 .map(JournalEntryDTO::new)
@@ -84,8 +81,7 @@ public class PatientsController {
 
     @RequestMapping(path = "/{id}/journalentries", method = RequestMethod.PUT)
     ResponseEntity addJournalEntry(@PathVariable("id") long id, @RequestBody JournalEntry newEntry){
-        Patient patient = patientsRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+        Patient patient = patientsRepository.findOne(id);
         patient.getJournalEntries().add(newEntry);
         patientsRepository.save(patient);
         return ResponseEntity.ok().build();
